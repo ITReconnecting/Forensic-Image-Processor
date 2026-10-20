@@ -1,0 +1,98 @@
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk, Menu
+import csv
+from pathlib import Path
+
+from runner import Runner
+from report import Report
+
+from imageStructureGUI import imageStructureGUI, imageHashGUI
+from imageStructure import imageStructure
+
+class App(tk.Tk):
+
+    def __init__(self):
+        super().__init__()
+
+        self.title("Forensic Image Viewer")
+        self.geometry("")
+
+        self.report = Report()
+        self.runner = Runner(self.report)
+        self.diskInfo = None
+
+        self.allowed_extensions = {
+            ".001",
+            ".dd",
+            ".img",
+            ".raw",
+            ".e01",
+            ".ex01",
+            ".aff",
+            ".aff4",
+        }
+
+        self.file_path = None
+
+        menubar = Menu(self)
+        self.config(menu=menubar)
+
+        options_menu = Menu(menubar)
+
+        options_menu.add_command(label='Disk Image Info', command=self.diskImageInfo)
+        options_menu.add_separator()
+        options_menu.add_command(label='Exit', command=self.destroy)
+
+        self.after(100, self.selectImage)
+
+    def selectImage(self):
+        """Ask the user for a file and parse it."""
+
+        self.file_path = filedialog.askopenfilename(
+            parent=self,
+            title="Select a file to use",
+            filetypes=[
+                ("RAW Image files", "*.001 *.dd *.img *.raw *.E01 *.ex01 *.aff *.aff4"),
+                ("All files", "*.*")
+            ]
+        )
+
+        if not self.file_path:
+            # Let the user retry rather than closing the app
+            if self.image_path is None:
+                messagebox.showinfo(
+                    "Image required",
+                    "Please select a disk image to continue.",
+                    parent=self
+                )
+                self.after(100, self.select_image)
+            return
+
+        extension = Path(self.file_path).suffix.lower()
+
+        if extension not in self.allowed_extensions:
+            messagebox.showerror(
+                "Unsupported format",
+                "The selected file extension is not supported.",
+                parent=self,
+            )
+            self.destroy()
+            return False
+        
+        self.startUp()
+
+    def startUp(self):
+        self.diskInfo = imageStructure(self.runner, self.file_path)
+        self.diskImageInfo()
+
+    def diskImageInfo(self):
+        frame_1 = imageHashGUI(self, self.diskInfo)
+        frame_1.grid(row=0, column=0)
+
+        frame_2 = imageStructureGUI(self, self.diskInfo)
+        frame_2.grid(row=1, column=0)
+        self.geometry('625x275')
+
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
