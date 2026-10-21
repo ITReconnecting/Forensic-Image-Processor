@@ -8,6 +8,8 @@ from report import Report
 
 from imageStructureGUI import imageStructureGUI, imageHashGUI, mmlsGUI, importantMmlsGUI
 from imageStructure import imageStructure
+from imageDeleteFileAnalysis import deletedFileAnalysis
+from deletedItemsGUI import DeletedItemsBrowser
 
 class App(tk.Tk):
 
@@ -36,6 +38,7 @@ class App(tk.Tk):
         options_menu = Menu(menubar)
 
         options_menu.add_command(label='Disk Image Info', command=self.diskImageInfo)
+        options_menu.add_command(label='Deleted Files', command=self.deletedFiles)
         options_menu.add_separator()
         options_menu.add_command(label='Exit', command=self.destroy)
 
@@ -97,8 +100,14 @@ class App(tk.Tk):
             mmlsFrame = importantMmlsGUI(self, self.diskInfo.importantMmls[x][3], self.diskInfo.importantMmls[x][0])
             x += 2
             mmlsFrame.grid(row=x, column=1)
+        
+        deletedFileAnalysis(self.runner, self.file_path, self.diskInfo)
 
         self.geometry('1700x450')
+
+    def deletedFiles(self):
+        frame = DeletedItemsBrowser(self, self.runner, self.file_path, self.diskInfo)
+        frame.grid(row=0, column=0)
 
 if __name__ == "__main__":
     app = App()
