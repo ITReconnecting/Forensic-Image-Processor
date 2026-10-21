@@ -27,7 +27,8 @@ class imageStructure():
         for line in self.mmls:
             for label in self._importantMmmlsLabels:
                 if " ".join(line[-3:]) in label:
-                    self.importantMmls.append((line[0], line[2], line[3]))
+                    fsstatInfo = self._fsstat(line[2])
+                    self.importantMmls.append((line[0], line[2], line[3], fsstatInfo))
 
     def _getHash(self):
         self.hash = self.runner.runCommand(f"sha256sum {self.file}")[0].split(" ")[0]
@@ -74,3 +75,16 @@ class imageStructure():
                     self.mmls.append(toAppend)
                 else:
                     self.mmls.append(splitLine)
+
+    def _fsstat(self, start):
+        fsstatResponse = self.runner.runCommand(f"fsstat -o {start} {self.file}")
+        fsstatResponseDecoded = fsstatResponse[0].split("\n")
+
+        filesystem = fsstatResponseDecoded[2].split(":")[1]
+        volumeName = fsstatResponseDecoded[5].split(":")[1]
+        version = fsstatResponseDecoded[6].split(":")[1]
+        clusterSize = fsstatResponseDecoded[20].split(":")[1]
+        clusterRange = fsstatResponseDecoded[21].split(":")[1]
+        sectorRange = fsstatResponseDecoded[22].split(":")[1]
+
+        return (filesystem, volumeName, version, clusterSize, clusterRange, sectorRange)

@@ -6,7 +6,7 @@ from pathlib import Path
 from runner import Runner
 from report import Report
 
-from imageStructureGUI import imageStructureGUI, imageHashGUI, mmlsGUI
+from imageStructureGUI import imageStructureGUI, imageHashGUI, mmlsGUI, importantMmlsGUI
 from imageStructure import imageStructure
 
 class App(tk.Tk):
@@ -92,7 +92,13 @@ class App(tk.Tk):
 
         frame_3 = mmlsGUI(self, self.diskInfo)
         frame_3.grid(row=2, column=0)
-        self.geometry('1400x450')
+
+        for x in range(len(self.diskInfo.importantMmls)):
+            mmlsFrame = importantMmlsGUI(self, self.diskInfo.importantMmls[x][3], self.diskInfo.importantMmls[x][0])
+            x += 2
+            mmlsFrame.grid(row=x, column=1)
+
+        self.geometry('1700x450')
 
 if __name__ == "__main__":
     app = App()
