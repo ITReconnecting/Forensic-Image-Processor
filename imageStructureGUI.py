@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Menu
+from tkinter import ttk, Menu, Entry
 from imageStructure import imageStructure
 
 class imageStructureGUI(ttk.LabelFrame):
@@ -60,5 +60,31 @@ class imageHashGUI(ttk.LabelFrame):
 
         self.hashTextLabel = ttk.Label(self, text=imageInfo.hash)
         self.hashTextLabel.grid(column=1, row=0, sticky='w', **options)
+
+        self.grid(column=0, row=0, padx=5, pady=5, sticky="nsew")
+
+class mmlsGUI(ttk.LabelFrame):
+
+    def __init__(self, container, imageInfo):
+        super().__init__(container)
+
+        self['text'] = 'mmls Information'
+
+        options = {'padx': 5, 'pady': 5}
+
+        # --- mmls table --- 
+        for i in range(len(imageInfo.mmls)):
+            for j in range(0, 6):
+                if i == 0:
+                    self.table = Entry(self, width=25, fg='black', font=('Arial',12,'bold'))
+                else:
+                    self.table = Entry(self, width=25, fg='black', font=('Arial',12))
+                self.table.grid(row=i, column=j)
+                if (i != 0) and (j == 0):
+                    self.table.insert(tk.END, imageInfo.mmls[i][j][:-1])
+                elif j != 5:
+                    self.table.insert(tk.END, imageInfo.mmls[i][j])
+                else:
+                    self.table.insert(tk.END, " ".join(imageInfo.mmls[i][j:]))
 
         self.grid(column=0, row=0, padx=5, pady=5, sticky="nsew")

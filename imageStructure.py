@@ -63,8 +63,14 @@ class imageStructure():
         mmlsResponse = self.runner.runCommand(f"mmls {self.file}")
         mmlsTemp = mmlsResponse[0].split("\n")
         
-        for x in range(5, len(mmlsTemp)):
+        for x in range(4, len(mmlsTemp)):
             splitLine = mmlsTemp[x].split(" ")
             splitLine = list(filter(('').__ne__, splitLine))
             if splitLine != []:
-                self.mmls.append(splitLine)
+                if x == 4:
+                    toAppend = ["ID"]
+                    for item in splitLine:
+                        toAppend.append(item)
+                    self.mmls.append(toAppend)
+                else:
+                    self.mmls.append(splitLine)

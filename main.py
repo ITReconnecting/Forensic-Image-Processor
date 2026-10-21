@@ -6,7 +6,7 @@ from pathlib import Path
 from runner import Runner
 from report import Report
 
-from imageStructureGUI import imageStructureGUI, imageHashGUI
+from imageStructureGUI import imageStructureGUI, imageHashGUI, mmlsGUI
 from imageStructure import imageStructure
 
 class App(tk.Tk):
@@ -25,11 +25,7 @@ class App(tk.Tk):
             ".001",
             ".dd",
             ".img",
-            ".raw",
-            ".e01",
-            ".ex01",
-            ".aff",
-            ".aff4",
+            ".raw"
         }
 
         self.file_path = None
@@ -43,6 +39,8 @@ class App(tk.Tk):
         options_menu.add_separator()
         options_menu.add_command(label='Exit', command=self.destroy)
 
+        menubar.add_cascade(label="Options", menu=options_menu)
+
         self.after(100, self.selectImage)
 
     def selectImage(self):
@@ -52,7 +50,7 @@ class App(tk.Tk):
             parent=self,
             title="Select a file to use",
             filetypes=[
-                ("RAW Image files", "*.001 *.dd *.img *.raw *.E01 *.ex01 *.aff *.aff4"),
+                ("RAW Image files", "*.001 *.dd *.img *.raw"),
                 ("All files", "*.*")
             ]
         )
@@ -91,7 +89,10 @@ class App(tk.Tk):
 
         frame_2 = imageStructureGUI(self, self.diskInfo)
         frame_2.grid(row=1, column=0)
-        self.geometry('625x275')
+
+        frame_3 = mmlsGUI(self, self.diskInfo)
+        frame_3.grid(row=2, column=0)
+        self.geometry('1400x450')
 
 if __name__ == "__main__":
     app = App()
